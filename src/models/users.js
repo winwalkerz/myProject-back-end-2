@@ -3,7 +3,8 @@ const db = require('./../db')
 // Defining models
 const Users = db.model('Users', {
     tableName: 'users',
-    hasTimestamps: true // มันจะ add เวลา auto ลง column  created_at และ updated_at เวลามีข้อมูล update ใน row
+    hasTimestamps: true, // มันจะ add เวลา auto ลง column  created_at และ updated_at เวลามีข้อมูล update ใน row
+    requireFetch: false
 })
 
 // Database Structure

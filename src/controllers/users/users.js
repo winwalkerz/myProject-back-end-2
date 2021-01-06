@@ -36,6 +36,7 @@ class UsersController{
             })
 
         }catch(err){
+            console.log(err.stack)
             res.status(400).json({
                 message: err.message
             })
@@ -68,8 +69,8 @@ class UsersController{
             if(user){
                 throw new Error("มีผู้ใช้งานนี้แล้ว.")
             }
-
-            await new Users({
+            
+           await new Users({
                 email: input.email,
                 name: input.name,
                 password: password
@@ -80,6 +81,7 @@ class UsersController{
             })
 
         }catch(err){
+            console.log(err.stack)
             res.status(400).json({
                 message: err.message
             })
@@ -112,6 +114,32 @@ class UsersController{
             })
 
         }catch(err){
+            console.log(err.stack)
+            res.status(400).json({
+                message: err.message
+            })
+        }
+    }
+
+    async deleteUser(req, res){
+        try {
+
+            let user_id = req.params.user_id
+            
+            // check 
+            let user = await Users.where('id', user_id).fetch()
+            if(!user){
+                throw new Error("ไม่มีผู้ใช้งานนี้.")
+            }
+
+            await user.destroy({ require: false })
+            
+            res.status(200).json({
+                message: "complete"
+            })
+
+        }catch(err){
+            console.log(err.stack)
             res.status(400).json({
                 message: err.message
             })

@@ -9,5 +9,6 @@ app.get('', (req, res)=>{
 app.post('/search', new Users().search)
 app.post('/create', new Users().createUser)
 app.put('/update/:user_id', new Users().updateUser)
+app.delete('/delete/:user_id', new Users().deleteUser)
 
 module.exports = app
