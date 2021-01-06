@@ -12,14 +12,16 @@ class UsersController{
         try {
 
             let input = req.body
-            input.email = input.email || ""
-            input.name = input.name || ""
+            input.search = input.search || ""
             input.page = input.page || 1
             input.per_page = input.per_page || 10
 
             let users_query = Users.query((qb)=>{
-                qb.where('name', 'LIKE', `%${input.name}%`)
-                qb.orWhere('email', 'LIKE', `%${input.email}%`)
+                if(input.search){
+                    qb.where('name', 'LIKE', `%${input.search}%`)
+                    qb.orWhere('email', 'LIKE', `%${input.search}%`)
+                }
+                qb.orderBy('id', 'DESC')
             })
             let users = await users_query.fetchPage({
                 columns: ['id', 'name', 'email'],
