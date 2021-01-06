@@ -6,6 +6,8 @@ app.get('', (req, res)=>{
     res.send('API users running.')
 })
 
+app.post('/search', new Users().search)
 app.post('/create', new Users().createUser)
+app.put('/update/:user_id', new Users().updateUser)
 
 module.exports = app
