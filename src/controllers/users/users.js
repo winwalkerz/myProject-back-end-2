@@ -92,7 +92,12 @@ class UsersController{
         try {
 
             let input = req.body
+            let authen = req.authen
+            // console.log(authen.id, req.params.user_id)
             let user_id = req.params.user_id
+            if(authen.id != user_id){
+                throw new Error("ไม่มีสิทธิ์เข้าถึง.")
+            }
 
             input.name = input.name || ""
             if(!input.name){
@@ -123,9 +128,11 @@ class UsersController{
 
     async deleteUser(req, res){
         try {
-
+            let authen = req.authen
             let user_id = req.params.user_id
-            
+            if(authen.id != user_id){
+                throw new Error("ไม่มีสิทธิ์เข้าถึง.")
+            }
             // check 
             let user = await Users.where('id', user_id).fetch()
             if(!user){
