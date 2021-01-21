@@ -24,7 +24,7 @@ class UsersController{
                 qb.orderBy('id', 'DESC')
             })
             let users = await users_query.fetchPage({
-                columns: ['id', 'name', 'email'],
+                columns: ['id', 'name','email'],        //เลือก colum ตาม db ของเราด้วย++++++++++
                 page: input.page,
                 pageSize: input.per_page
             })
