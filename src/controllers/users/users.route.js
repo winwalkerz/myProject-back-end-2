@@ -8,6 +8,7 @@ app.get('', (req, res)=>{
 })
 
 app.post('/search', new Users().search)
+app.get('/showDB', new Users().showDB)
 app.post('/create', new Users().createUser)
 
 app.put('/update/:user_id', [
