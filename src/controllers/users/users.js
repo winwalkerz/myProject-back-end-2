@@ -40,22 +40,6 @@ class UsersController {
     }
   }
 
-  async showDB(req, res) {
-    // Users.query(
-    //     'SELECT id, first_name, last_name FROM users WHERE id=? ORDER BY id LIMIT 10 OFFSET ?',
-    //     [Users, 10*(req.params.page || 0)],
-    //     (error, results) => {
-    //       if (error) {
-    //         console.log(error);
-    //         res.status(500).json({status: 'error'});
-    //       } else {
-    //         res.status(200).json(results);
-    //       }
-    //     }
-    //   );
-    
-  }
-
   async createUser(req, res) {
     try {
       let input = req.body;
@@ -98,7 +82,44 @@ class UsersController {
       });
     }
   }
+  async showDB(req, res) {
+    try {
+      let authen = req.authen;
+      let authen_id = req.authen.id;
+      // console.log(authen);
+      if (authen) {
+        let users_query  = Users.query((qb) => {
+          // qb.where("id", "=", authen_id);
+          // qb.orWhere("id", "=")
+          qb.from('users').innerJoin('leavework','users.id','leavework.id_users')
+          qb.where('users.id','=',authen_id)
+        });
+        // console.log(users_query)
+        let users = await users_query.fetchPage({
+          columns: ["id_leave","first_name", "last_name", "email", "date_time","type_leave"], 
+          //เลือก colum ตาม db ของเราด้วย++++++++++
+          // columns:["id"]
+          // page: in, put.page,
+          // pageSize: input.per_page,
+        });
+        // console.log(users)
+        users = users.toJSON();
+        console.log(users)
+        let count = await users_query.count();
 
+        res.status(200).json({
+          count: count,
+          data: users,
+        });
+        // console.log(users)
+      }
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
   async updateUser(req, res) {
     try {
       let input = req.body;
