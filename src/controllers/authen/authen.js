@@ -30,7 +30,7 @@ class AuthenController {
 
       let token = new Utils().signToken({
         id: user.id,
-        name: user.name,
+        name: user.first_name,
         role: "member",
       });
 

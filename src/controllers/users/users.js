@@ -44,14 +44,18 @@ class UsersController {
     try {
       let input = req.body;
       input.email = input.email || "";
-      input.name = input.name || "";
+      input.first_name = input.first_name || "";
+      input.last_name = input.last_name || "";
 
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
 
-      if (!input.name) {
-        throw new Error("Require name.");
+      if (!input.first_name) {
+        throw new Error("Require first name.");
+      }
+      if (!input.last_name) {
+        throw new Error("Require last name.");
       }
 
       if (!input.password) {
@@ -68,7 +72,8 @@ class UsersController {
 
       await new Users({
         email: input.email,
-        name: input.name,
+        first_name: input.first_name,
+        last_name: input.last_name,
         password: password,
       }).save();
 
