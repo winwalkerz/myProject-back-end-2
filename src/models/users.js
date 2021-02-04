@@ -1,11 +1,11 @@
-const db = require('./../db')
+const db = require("./../db");
 
 // Defining models
-const Users = db.model('Users', {
-    tableName: 'users',
-    hasTimestamps: true, // มันจะ add เวลา auto ลง column     และ updated_at เวลามีข้อมูล update ใน row
-    requireFetch: false
-})
+const Users = db.model("Users", {
+  tableName: "users",
+  hasTimestamps: true, // มันจะ add เวลา auto ลง column     และ updated_at เวลามีข้อมูล update ใน row
+  requireFetch: false,
+});
 
 // Database Structure
 /*
@@ -17,4 +17,4 @@ created_at: datetime
 updated_at: datetime
 */
 
-module.exports = Users
+module.exports = Users;

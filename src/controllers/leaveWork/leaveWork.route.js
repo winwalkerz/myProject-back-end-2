@@ -1,5 +1,4 @@
 const express = require("express");
-const LeaveworkController = require("./leaveWork");
 const app = express.Router();
 const LeaveWork = require("./leaveWork");
 

@@ -1,5 +1,4 @@
 const { knex } = require("../../db");
-const LeaveWork = require("./../../models/leave_work");
 const Leavework = require("./../../models/leave_work");
 const Utils = require("./../../utils");
 
@@ -42,28 +41,26 @@ class LeaveworkController {
       input.page = input.page || 1;
       input.per_page = input.per_page || 10;
 
-      let types_query = LeaveWork.query((qb) => {
+      let leave_query = Leavework.query((qb) => {
         if (input.search) {
-          qb.where("description", "LIKE", `%${input.search}%`);
-          // qb.orWhere("type_name", "LIKE", `%${input.search}%`);
-          // qb.orWhere("email", "LIKE", `%${input.search}%`);
+          qb.where("id_leave", "LIKE", `%${input.search}%`);
+          qb.orWhere("description", "LIKE", `%${input.search}%`);
+          qb.orWhere("email", "LIKE", `%${input.search}%`);
         }
         qb.orderBy("id_leave", "DESC");
       });
-      let types = await types_query.fetchPage({
-        columns: ["id_leave", "description"],
-        //เลือก colum ตาม db ของเราด้วย++++++++++
-        // columns:["id"]
-        // page: in, put.page,
-        // pageSize: input.per_page,
+      // console.log(types_query);
+      let types = await leave_query.fetchPage({
+        columns: ['*'],
+        page: input.page,
+        pageSize: input.per_page,
       });
 
-      types = types.toJSON();
-      console.log(types);
-      let count = await leave_query.count();
+      types = leave_query.toJSON();
+      // let count = await leave_query.count();
 
       res.status(200).json({
-        count: count,
+        // count: count,
         data: types,
       });
       // console.log(users)

@@ -6,6 +6,6 @@ app.get("", (req, res) => {
   res.send("API type running.");
 });
 
-app.post("/showtype", new Types().showType);
+app.get("/search", new Types().search);
 
 module.exports = app;

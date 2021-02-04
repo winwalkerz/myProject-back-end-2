@@ -4,35 +4,7 @@ const Utils = require("./../../utils");
 class UsersController {
   constructor() {}
 
-  async searchAll(req, res) {
-    try {
-      let users_query = Users.query((qb) => {
-          qb.where("first_name", "LIKE", `%${input.search}%`);
-          qb.orWhere("last_name", "LIKE", `%${input.search}%`);
-          qb.orWhere("email", "LIKE", `%${input.search}%`);
-        
-        qb.orderBy("id", "DESC");
-      });
-      let users = await users_query.fetchPage({
-        columns: ["id", "first_name", "last_name", "email"], //เลือก colum ตาม db ของเราด้วย++++++++++
-        page: input.page,
-        pageSize: input.per_page,
-      });
-
-      users = users.toJSON();
-      let count = await users_query.count();
-
-      res.status(200).json({
-        count: count,
-        data: users,
-      });
-    } catch (err) {
-      console.log(err.stack);
-      res.status(400).json({
-        message: err.message,
-      });
-    }
-  }async search(req, res) {
+  async search(req, res) {
     try {
       let input = req.body;
       input.search = input.search || "";
@@ -47,12 +19,13 @@ class UsersController {
         }
         qb.orderBy("id", "DESC");
       });
+      // console.log("this is log",users_query)
       let users = await users_query.fetchPage({
-        columns: ["id", "first_name", "last_name", "email"], //เลือก colum ตาม db ของเราด้วย++++++++++
+        columns: ['*'], //เลือก colum ตาม db ของเราด้วย++++++++++
         page: input.page,
         pageSize: input.per_page,
       });
-
+      // console.log("this is a type:",typeof users_query)
       users = users.toJSON();
       let count = await users_query.count();
 
@@ -129,9 +102,9 @@ class UsersController {
           .innerJoin('types','id_type','leavework.id_type_fk')
           qb.where('users.id','=',authen_id)
         });
-        // console.log(users_query)
+        // console.log(typeof users_query)
         let users = await users_query.fetchPage({
-          columns: ["id_leave","first_name", "last_name", "email", "date","type_name","status_name"], 
+          columns: ["id_leave","first_name", "last_name", "email","type_name","status_name"], 
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["id"]
           // page: in, put.page,
