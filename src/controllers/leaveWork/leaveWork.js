@@ -7,18 +7,26 @@ class LeaveworkController {
   async createLeave(req, res) {
     try {
       let input = req.body;
-      input.id_users = input.id_users || "";
-      input.date_time = input.date_time || "";
-      input.type_leave = input.type_leave || "";
+      input.id_user_fk = input.id_user_fk || "";
+      input.created_at = input.created_at || "";
+      input.id_status_fk = input.id_status_fk || "";
+      input.id_type_fk = input.id_type_fk || "";
+      input.date_start = input.date_start || "";
+      input.date_end = input.date_end || "";
+      input.description = input.description || "";
       // await new Leavework({
       //   id_users: input.id_users,
       //   date_time: input.date_time,
       //   type_leave: input.type_leave,
       // }).save();
       await knex("leavework").insert({
-        date_time: input.date_time,
-        type_leave: input.type_leave,
-        id_users: input.id_users,
+        id_user_fk: input.id_user_fk,
+        created_at: input.created_at,
+        id_status_fk: input.id_status_fk,
+        id_type_fk: input.id_type_fk,
+        date_start: input.date_start,
+        date_end: input.date_end,
+        description: input.description,
       });
 
       // .from("user")
@@ -51,7 +59,7 @@ class LeaveworkController {
       });
       // console.log(types_query);
       let types = await leave_query.fetchPage({
-        columns: ['*'],
+        columns: ["*"],
         page: input.page,
         pageSize: input.per_page,
       });

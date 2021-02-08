@@ -98,13 +98,13 @@ class UsersController {
           // qb.where("id", "=", authen_id);
           // qb.orWhere("id", "=")
           qb.from('leavework').innerJoin('users','users.id','leavework.id_user_fk')
-          .innerJoin('satatus','id_status','leavework.id_status_fk')
-          .innerJoin('types','id_type','leavework.id_type_fk')
+          .innerJoin('satatus','satatus.id','leavework.id_status_fk')
+          .innerJoin('types','types.id','leavework.id_type_fk')
           qb.where('users.id','=',authen_id)
         });
         // console.log(typeof users_query)
         let users = await users_query.fetchPage({
-          columns: ["id_leave","first_name", "last_name", "email","type_name","status_name"], 
+          columns: ["first_name", "last_name", "email","type_name","status_name","date_start","date_end"], 
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["id"]
           // page: in, put.page,

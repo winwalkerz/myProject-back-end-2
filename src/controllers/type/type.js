@@ -1,5 +1,5 @@
 const { knex } = require("../../db");
-const Types = require("../../models/types");
+const TypesModel = require("../../models/types");
 
 class TypesController {
   
@@ -7,22 +7,16 @@ class TypesController {
   
   async search(req, res) {
     try {
-      let types_query = knex.select().from("types");
-      // console.log(typ)
-      // let type = await types_query.fetchPage({
-      //   columns: ["id_type", "type_name"],          //เลือก colum ตาม db ของเราด้วย++++++++++
-      //   // columns:["id"],
-      //   // page: input.page,
-      //   // pageSize: input.per_page,
-      // });
-      // let myJSON = JSON.stringify(types_query);
-      let types = types_query.toJSON();
-      // console.log(types_query);
+      let types_query = TypesModel
+      let type = await types_query.fetchPage({
+        columns: ['*']
+      });
+      type = type.toJSON();
       let count = await types_query.count();
 
       res.status(200).json({
         count: count,
-        data: types,
+        data: type,
       });
       // console.log(users)
     } catch (err) {
