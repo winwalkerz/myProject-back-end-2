@@ -1,5 +1,5 @@
 const { knex } = require("../../db");
-const Leavework = require("./../../models/leave_work");
+const LeaveworkModel = require("./../../models/leave_work");
 const Utils = require("./../../utils");
 
 class LeaveworkController {
@@ -8,7 +8,6 @@ class LeaveworkController {
     try {
       let input = req.body;
       input.id_user_fk = input.id_user_fk || "";
-      input.created_at = input.created_at || "";
       input.id_status_fk = input.id_status_fk || "";
       input.id_type_fk = input.id_type_fk || "";
       input.date_start = input.date_start || "";
@@ -19,15 +18,14 @@ class LeaveworkController {
       //   date_time: input.date_time,
       //   type_leave: input.type_leave,
       // }).save();
-      await knex("leavework").insert({
+      await new LeaveworkModel({
         id_user_fk: input.id_user_fk,
-        created_at: input.created_at,
         id_status_fk: input.id_status_fk,
         id_type_fk: input.id_type_fk,
         date_start: input.date_start,
         date_end: input.date_end,
         description: input.description,
-      });
+      }).save();
 
       // .from("user")
       // .innerJoin("leavework", "users.id", "leavework.id_users");
@@ -49,13 +47,13 @@ class LeaveworkController {
       input.page = input.page || 1;
       input.per_page = input.per_page || 10;
 
-      let leave_query = Leavework.query((qb) => {
+      let leave_query = LeaveworkModel.query((qb) => {
         if (input.search) {
-          qb.where("id_leave", "LIKE", `%${input.search}%`);
+          qb.where("id", "LIKE", `%${input.search}%`);
           qb.orWhere("description", "LIKE", `%${input.search}%`);
           qb.orWhere("email", "LIKE", `%${input.search}%`);
         }
-        qb.orderBy("id_leave", "DESC");
+        qb.orderBy("id", "DESC");
       });
       // console.log(types_query);
       let types = await leave_query.fetchPage({

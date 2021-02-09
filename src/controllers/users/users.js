@@ -21,7 +21,7 @@ class UsersController {
       });
       // console.log("this is log",users_query)
       let users = await users_query.fetchPage({
-        columns: ['*'], //เลือก colum ตาม db ของเราด้วย++++++++++
+        columns: ["*"], //เลือก colum ตาม db ของเราด้วย++++++++++
         page: input.page,
         pageSize: input.per_page,
       });
@@ -47,7 +47,7 @@ class UsersController {
       input.email = input.email || "";
       input.first_name = input.first_name || "";
       input.last_name = input.last_name || "";
-
+      input.role = input.role || "";
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -76,6 +76,7 @@ class UsersController {
         first_name: input.first_name,
         last_name: input.last_name,
         password: password,
+        role: input.role,
       }).save();
 
       res.status(200).json({
@@ -94,17 +95,19 @@ class UsersController {
       let authen_id = req.authen.id;
       // console.log(authen);
       if (authen) {
-        let users_query  = Users.query((qb) => {
+        let users_query = Users.query((qb) => {
           // qb.where("id", "=", authen_id);
           // qb.orWhere("id", "=")
-          qb.from('leavework').innerJoin('users','users.id','leavework.id_user_fk')
-          .innerJoin('satatus','satatus.id','leavework.id_status_fk')
-          .innerJoin('types','types.id','leavework.id_type_fk')
-          qb.where('users.id','=',authen_id)
+          qb.from("leavework")
+            .innerJoin("users", "users.id", "leavework.id_user_fk")
+            .innerJoin("satatus", "satatus.id", "leavework.id_status_fk")
+            .innerJoin("types", "types.id", "leavework.id_type_fk");
+          qb.where("users.id", "=", authen_id);
         });
         // console.log(typeof users_query)
         let users = await users_query.fetchPage({
-          columns: ["first_name", "last_name", "email","type_name","status_name","date_start","date_end"], 
+          columns: ["*"
+          ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["id"]
           // page: in, put.page,
@@ -112,7 +115,7 @@ class UsersController {
         });
         // console.log(users)
         users = users.toJSON();
-        console.log(users)
+        // console.log(users);
         let count = await users_query.count();
 
         res.status(200).json({
