@@ -9,7 +9,7 @@ class LeaveworkController {
       let input = req.body;
       input.id_user_fk = input.id_user_fk || "";
       input.id_status_fk = input.id_status_fk || "";
-      input.id_type_fk = input.id_type_fk || "";
+      input.type = input.type || "";
       input.date_start = input.date_start || "";
       input.date_end = input.date_end || "";
       input.description = input.description || "";
@@ -21,7 +21,7 @@ class LeaveworkController {
       await new LeaveworkModel({
         id_user_fk: input.id_user_fk,
         id_status_fk: input.id_status_fk,
-        id_type_fk: input.id_type_fk,
+        type: input.type,
         date_start: input.date_start,
         date_end: input.date_end,
         description: input.description,
@@ -70,6 +70,54 @@ class LeaveworkController {
         data: types,
       });
       // console.log(users)
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+  async updateLeave(req, res) {
+    try {
+      let input = req.body;
+      let leave_id = req.params.leave_id;
+      let leave = await LeaveworkModel.where("id", leave_id).fetch();
+      if (!leave) {
+        throw new Error("useless.");
+      }
+      await leave.save(
+        {
+          description: input.description,
+          date_start: input.date_start,
+          date_end: input.date_end,
+          type: input.type,
+        },
+        { methods: "update", patch: true }
+      );
+
+      res.status(200).json({
+        message: "complete",
+      });
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+  async deleteLeave(req, res) {
+    try {
+      let leave_id = req.params.leave_id;
+      let leave = await LeaveworkModel.where("id", leave_id).fetch();
+      if (!leave) {
+        throw new Error("useless.");
+      }
+
+      await leave.destroy({ require: false });
+
+      res.status(200).json({
+        message: "complete",
+      });
     } catch (err) {
       console.log(err.stack);
       res.status(400).json({

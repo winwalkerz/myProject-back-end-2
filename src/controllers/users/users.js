@@ -96,20 +96,27 @@ class UsersController {
       // console.log(authen);
       if (authen) {
         let users_query = Users.query((qb) => {
-          // qb.where("id", "=", authen_id);
-          // qb.orWhere("id", "=")
           qb.from("leavework")
             .innerJoin("users", "users.id", "leavework.id_user_fk")
-            .innerJoin("satatus", "satatus.id", "leavework.id_status_fk")
-            .innerJoin("types", "types.id", "leavework.id_type_fk");
+            .innerJoin("status", "status.id", "leavework.id_status_fk");
           qb.where("users.id", "=", authen_id);
         });
         // console.log(typeof users_query)
         let users = await users_query.fetchPage({
-          columns: ["*"
+          columns: [
+            "leavework.id",
+            "description",
+            "created_at",
+            "first_name",
+            "last_name",
+            "email",
+            "date_start",
+            "date_end",
+            "type",
+            "status_name",
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
-          // columns:["id"]
+          // columns:["leavework.created_at"]
           // page: in, put.page,
           // pageSize: input.per_page,
         });
@@ -122,7 +129,7 @@ class UsersController {
           count: count,
           data: users,
         });
-        // console.log(users)
+        console.log(users);
       }
     } catch (err) {
       console.log(err.stack);

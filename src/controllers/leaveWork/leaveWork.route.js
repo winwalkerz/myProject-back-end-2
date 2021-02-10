@@ -7,5 +7,7 @@ app.get("", (req, res) => {
 });
 
 app.post("/createleave", new LeaveWork().createLeave);
-app.post("/showleave", new LeaveWork().showLeave)
+app.post("/showleave", new LeaveWork().showLeave);
+app.put("/update/:leave_id", new LeaveWork().updateLeave);
+app.delete("/delete/:leave_id", new LeaveWork().deleteLeave);
 module.exports = app;
