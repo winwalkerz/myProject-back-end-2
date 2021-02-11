@@ -138,6 +138,48 @@ class UsersController {
       });
     }
   }
+  async showAllUser(req, res) {
+    try {
+      let authen = req.authen;
+      let authen_role = req.authen.role;
+      if (authen_role === "admin") {
+        let users_query = Users.query((qb) => {
+          qb.from("leavework")
+            .innerJoin("users", "users.id", "leavework.id_user_fk")
+            .innerJoin("status", "status.id", "leavework.id_status_fk");
+          qb.where("users.role", "!=", authen_role);
+        });
+        let users = await users_query.fetchPage({
+          columns: [
+            "leavework.id",
+            "description",
+            "created_at",
+            "first_name",
+            "last_name",
+            "email",
+            "date_start",
+            "date_end",
+            "type",
+            "status_name",
+            "role"
+          ],
+        });
+        users = users.toJSON();
+        let count = await users_query.count();
+
+        res.status(200).json({
+          count: count,
+          data: users,
+        });
+        console.log(users);
+      }
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
   async updateUser(req, res) {
     try {
       let input = req.body;

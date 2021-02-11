@@ -1,7 +1,7 @@
 const { knex } = require("../../db");
 const LeaveworkModel = require("./../../models/leave_work");
 const Utils = require("./../../utils");
-
+const StatusModel = require("./../../models/status");
 class LeaveworkController {
   constructor() {}
   async createLeave(req, res) {
@@ -70,6 +70,24 @@ class LeaveworkController {
         data: types,
       });
       // console.log(users)
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+  async showStatus(req, res) {
+    try {
+      let status_q = StatusModel;
+      let status = await status_q.fetchPage({
+        columns: ["*"],
+      });
+      status = status.toJSON();
+
+      res.status(200).json({
+        data: status,
+      });
     } catch (err) {
       console.log(err.stack);
       res.status(400).json({
