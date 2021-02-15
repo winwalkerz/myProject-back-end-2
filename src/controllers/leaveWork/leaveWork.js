@@ -2,6 +2,8 @@ const { knex } = require("../../db");
 const LeaveworkModel = require("./../../models/leave_work");
 const Utils = require("./../../utils");
 const StatusModel = require("./../../models/status");
+const fs = require("fs");
+var admin = require("firebase-admin");
 class LeaveworkController {
   constructor() {}
   async createLeave(req, res) {
@@ -13,6 +15,7 @@ class LeaveworkController {
       input.date_start = input.date_start || "";
       input.date_end = input.date_end || "";
       input.description = input.description || "";
+      input.file = input.file || "";
       // await new Leavework({
       //   id_users: input.id_users,
       //   date_time: input.date_time,
@@ -25,6 +28,7 @@ class LeaveworkController {
         date_start: input.date_start,
         date_end: input.date_end,
         description: input.description,
+        file: input.file,
       }).save();
 
       // .from("user")
@@ -109,6 +113,7 @@ class LeaveworkController {
           date_start: input.date_start,
           date_end: input.date_end,
           type: input.type,
+          id_status_fk: input.id_status_fk,
         },
         { methods: "update", patch: true }
       );
@@ -135,6 +140,30 @@ class LeaveworkController {
 
       res.status(200).json({
         message: "complete",
+      });
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+  async uploadfile(req, res) {
+    try {
+      let image = req.file.buffer; //ฝั่ง client ส่ง file มา
+      let filename = `${Date.now()}-${req.file.originalname}`;
+      let save_patch = `${process.cwd()}/public/temp/${filename}`;
+
+      fs.writeFileSync(`${process.cwd()}/public/temp/${filename}`, image); // เขียน file in folder temp
+      let upload = admin.storage().bucket();
+      let res_upload = await upload.upload(save_patch, {});
+      fs.unlinkSync(save_patch); // delete from temp
+
+      let getpath = await res_upload[0].getMetadata();
+      getpath = getpath[0];
+      let url = `https://firebasestorage.googleapis.com/v0/b/${getpath.bucket}/o/${getpath.name}?alt=media`;
+      return res.json({
+        patch: url,
       });
     } catch (err) {
       console.log(err.stack);

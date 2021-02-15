@@ -113,7 +113,7 @@ class UsersController {
             "date_start",
             "date_end",
             "type",
-            "status_name",
+            "id_status_fk",
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["leavework.created_at"]
@@ -161,6 +161,7 @@ class UsersController {
             "date_end",
             "type",
             "status_name",
+            "id_status_fk",
             "role"
           ],
         });
