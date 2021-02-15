@@ -162,7 +162,7 @@ class UsersController {
             "type",
             "status_name",
             "id_status_fk",
-            "role"
+            "role"  //update
           ],
         });
         users = users.toJSON();
