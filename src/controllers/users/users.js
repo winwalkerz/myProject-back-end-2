@@ -1,6 +1,18 @@
 const Users = require("./../../models/users");
 const Utils = require("./../../utils");
 
+
+//           -----------------------Pagination-----------------------
+//https://stackoverflow.com/questions/51732870/create-pagination-using-knexjs-pg
+const page = (page, per_page) => {
+  return (page - 1) * per_page;
+};
+
+const per_page = (count, per_page) => {
+  return Math.ceil(count / per_page);
+};
+
+//           -----------------------Pagination-----------------------
 class UsersController {
   constructor() {}
 
@@ -140,14 +152,17 @@ class UsersController {
   }
   async showAllUser(req, res) {
     try {
+      let input = req.body;
       let authen = req.authen;
       let authen_role = req.authen.role;
+      input.page = input.page || 1;
+      input.per_page = input.per_page || 10;
       if (authen_role === "admin") {
         let users_query = Users.query((qb) => {
           qb.from("leavework")
             .innerJoin("users", "users.id", "leavework.id_user_fk")
             .innerJoin("status", "status.id", "leavework.id_status_fk");
-          qb.where("users.role", "!=", authen_role);
+          qb.where("users.role", "!=", authen_role).offset(page).limit(per_page)
         });
         let users = await users_query.fetchPage({
           columns: [
@@ -162,11 +177,12 @@ class UsersController {
             "type",
             "status_name",
             "id_status_fk",
-            "role" 
-            
-            
+            "role",
+
             //update
           ],
+          page: page,
+          pageSize:per_page,
         });
         users = users.toJSON();
         let count = await users_query.count();

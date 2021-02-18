@@ -9,9 +9,11 @@ class HolidayController {
       let input = req.body;
       input.date = input.date || "";
       input.content = input.content || "";
+      input.type = input.type || "";
       await new HolidayModel({
         date: input.date,
         content: input.content,
+        type: input.type,
       }).save();
 
       res.status(200).json({
@@ -34,7 +36,7 @@ class HolidayController {
       let count = await holiday_q.count();
       res.status(200).json({
         data: holiday,
-        count:count
+        count: count,
       });
     } catch (err) {
       console.log(err.stack);
