@@ -1,16 +1,8 @@
 const Users = require("./../../models/users");
 const Utils = require("./../../utils");
 
-
 //           -----------------------Pagination-----------------------
 //https://stackoverflow.com/questions/51732870/create-pagination-using-knexjs-pg
-const page = (page, per_page) => {
-  return (page - 1) * per_page;
-};
-
-const per_page = (count, per_page) => {
-  return Math.ceil(count / per_page);
-};
 
 //           -----------------------Pagination-----------------------
 class UsersController {
@@ -60,6 +52,7 @@ class UsersController {
       input.first_name = input.first_name || "";
       input.last_name = input.last_name || "";
       input.role = input.role || "";
+      input.position = input.position || "";
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -89,6 +82,7 @@ class UsersController {
         last_name: input.last_name,
         password: password,
         role: input.role,
+        position: input.position,
       }).save();
 
       res.status(200).json({
@@ -152,8 +146,8 @@ class UsersController {
   }
   async showAllUser(req, res) {
     try {
-      let input = req.body;
-      let authen = req.authen;
+      let input = req.query;
+      // let authen = req.authen;
       let authen_role = req.authen.role;
       input.page = input.page || 1;
       input.per_page = input.per_page || 10;
@@ -162,7 +156,7 @@ class UsersController {
           qb.from("leavework")
             .innerJoin("users", "users.id", "leavework.id_user_fk")
             .innerJoin("status", "status.id", "leavework.id_status_fk");
-          qb.where("users.role", "!=", authen_role).offset(page).limit(per_page)
+          qb.where("users.role", "!=", authen_role);
         });
         let users = await users_query.fetchPage({
           columns: [
@@ -181,8 +175,8 @@ class UsersController {
 
             //update
           ],
-          page: page,
-          pageSize:per_page,
+          pageSize: input.per_page, // Defaults to 10 if not specified
+          page: input.page, // Defaults to 1 if not specified
         });
         users = users.toJSON();
         let count = await users_query.count();
