@@ -120,6 +120,7 @@ class UsersController {
             "date_end",
             "type",
             "id_status_fk",
+            "status_name"
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["leavework.created_at"]
@@ -146,17 +147,18 @@ class UsersController {
   }
   async showAllUser(req, res) {
     try {
-      let input = req.query;
-      // let authen = req.authen;
+      let input = req.body;
       let authen_role = req.authen.role;
       input.page = input.page || 1;
       input.per_page = input.per_page || 10;
       if (authen_role === "admin") {
+
         let users_query = Users.query((qb) => {
           qb.from("leavework")
             .innerJoin("users", "users.id", "leavework.id_user_fk")
             .innerJoin("status", "status.id", "leavework.id_status_fk");
-          qb.where("users.role", "!=", authen_role);
+          qb.where("check",input.check).whereNot("role",authen_role)
+          qb.orderBy("updated_at", "DESC");
         });
         let users = await users_query.fetchPage({
           columns: [
@@ -172,6 +174,7 @@ class UsersController {
             "status_name",
             "id_status_fk",
             "role",
+            "check"
 
             //update
           ],

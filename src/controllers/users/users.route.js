@@ -9,7 +9,7 @@ app.get("", (req, res) => {
 
 app.post("/search", new Users().search);
 app.get("/showdb", [new AuthenMiddleware().verifyJWT], new Users().showDB);
-app.get("/showbyuser", [new AuthenMiddleware().verifyJWT], new Users().showAllUser);
+app.post("/showbyuser", [new AuthenMiddleware().verifyJWT], new Users().showAllUser); // change to method post
 app.post("/create", new Users().createUser);
 
 app.put(

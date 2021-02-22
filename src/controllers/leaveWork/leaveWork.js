@@ -16,6 +16,7 @@ class LeaveworkController {
       input.date_end = input.date_end || "";
       input.description = input.description || "";
       input.file = input.file || "";
+      input.check = input.check
       // await new Leavework({
       //   id_users: input.id_users,
       //   date_time: input.date_time,
@@ -29,6 +30,7 @@ class LeaveworkController {
         date_end: input.date_end,
         description: input.description,
         file: input.file,
+        check : input.check
       }).save();
 
       // .from("user")
@@ -44,43 +46,43 @@ class LeaveworkController {
     }
   }
 
-  async showLeave(req, res) {
-    try {
-      let input = req.body;
-      input.search = input.search || "";
-      input.page = input.page || 1;
-      input.per_page = input.per_page || 10;
+  // async showLeave(req, res) {
+  //   try {
+  //     let input = req.body;
+  //     input.search = input.search || "";
+  //     input.page = input.page || 1;
+  //     input.per_page = input.per_page || 10;
 
-      let leave_query = LeaveworkModel.query((qb) => {
-        if (input.search) {
-          qb.where("id", "LIKE", `%${input.search}%`);
-          qb.orWhere("description", "LIKE", `%${input.search}%`);
-          qb.orWhere("email", "LIKE", `%${input.search}%`);
-        }
-        qb.orderBy("id", "DESC");
-      });
-      // console.log(types_query);
-      let types = await leave_query.fetchPage({
-        columns: ["*"],
-        page: input.page,
-        pageSize: input.per_page,
-      });
+  //     let leave_query = LeaveworkModel.query((qb) => {
+  //       if (input.search) {
+  //         qb.where("id", "LIKE", `%${input.search}%`);
+  //         qb.orWhere("description", "LIKE", `%${input.search}%`);
+  //         qb.orWhere("email", "LIKE", `%${input.search}%`);
+  //       }
+  //       qb.orderBy("id", "DESC");
+  //     });
+  //     // console.log(types_query);
+  //     let types = await leave_query.fetchPage({
+  //       columns: ["*"],
+  //       page: input.page,
+  //       pageSize: input.per_page,
+  //     });
 
-      types = leave_query.toJSON();
-      // let count = await leave_query.count();
+  //     types = leave_query.toJSON();
+  //     // let count = await leave_query.count();
 
-      res.status(200).json({
-        // count: count,
-        data: types,
-      });
-      // console.log(users)
-    } catch (err) {
-      console.log(err.stack);
-      res.status(400).json({
-        message: err.message,
-      });
-    }
-  }
+  //     res.status(200).json({
+  //       // count: count,
+  //       data: types,
+  //     });
+  //     // console.log(users)
+  //   } catch (err) {
+  //     console.log(err.stack);
+  //     res.status(400).json({
+  //       message: err.message,
+  //     });
+  //   }
+  // }
   async showStatus(req, res) {
     try {
       let status_q = StatusModel;
