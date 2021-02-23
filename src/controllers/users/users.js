@@ -149,15 +149,15 @@ class UsersController {
     try {
       let input = req.body;
       let authen_role = req.authen.role;
+      input.check= input.check||"",
       input.page = input.page || 1;
       input.per_page = input.per_page || 10;
       if (authen_role === "admin") {
-
         let users_query = Users.query((qb) => {
           qb.from("leavework")
             .innerJoin("users", "users.id", "leavework.id_user_fk")
             .innerJoin("status", "status.id", "leavework.id_status_fk");
-          qb.where("check",input.check).whereNot("role",authen_role)
+          qb.where("check", "LIKE", `%${input.check}%`).whereNot("role",authen_role)
           qb.orderBy("updated_at", "DESC");
         });
         let users = await users_query.fetchPage({
@@ -181,6 +181,7 @@ class UsersController {
           pageSize: input.per_page, // Defaults to 10 if not specified
           page: input.page, // Defaults to 1 if not specified
         });
+        
         users = users.toJSON();
         let count = await users_query.count();
 
