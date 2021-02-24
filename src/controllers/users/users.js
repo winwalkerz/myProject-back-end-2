@@ -120,7 +120,7 @@ class UsersController {
             "date_end",
             "type",
             "id_status_fk",
-            "status_name"
+            "status_name",
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["leavework.created_at"]
@@ -145,19 +145,58 @@ class UsersController {
       });
     }
   }
+  // async filterData(req, res) {
+  //   try {
+  //     let input = req.body;
+  //     input.search = input.search || "";
+  //     // input.last_name = input.last_name || "";
+  //     input.page = input.page || 1;
+  //     input.per_page = input.per_page || 10;
+
+  //     let filter_q = Users.query((qb) => {
+  //       if (input.search) {
+  //         qb.from("leavework")
+  //           .innerJoin("users", "users.id", "leavework.id_user_fk")
+  //           .innerJoin("status", "status.id", "leavework.id_status_fk");
+  //         qb.where("first_name", "LIKE", `%${input.search}%`);
+  //         qb.orWhere("last_name", "LIKE", `%${input.search}%`);
+  //       }
+  //       // qb.orderBy("updated_at", "DESC");
+  //     });
+  //     let filters = await filter_q.fetchPage({
+  //       columns: ["*"],
+  //       page: input.page,
+  //       pageSize: input.per_page,
+  //     });
+  //     filters = filters.toJSON();
+  //     let count = await filter_q.count();
+
+  //     res.status(200).json({
+  //       count: count,
+  //       data: filters,
+  //     });
+  //   } catch (err) {
+  //     console.log(err.stack);
+  //     res.status(400).json({
+  //       message: err.message,
+  //     });
+  //   }
+  // }
   async showAllUser(req, res) {
     try {
       let input = req.body;
       let authen_role = req.authen.role;
-      input.check= input.check||"",
-      input.page = input.page || 1;
+      (input.check = input.check || ""), (input.page = input.page || 1);
       input.per_page = input.per_page || 10;
       if (authen_role === "admin") {
         let users_query = Users.query((qb) => {
           qb.from("leavework")
             .innerJoin("users", "users.id", "leavework.id_user_fk")
             .innerJoin("status", "status.id", "leavework.id_status_fk");
-          qb.where("check", "LIKE", `%${input.check}%`).whereNot("role",authen_role)
+          qb.where("check", "LIKE", `%${input.check}%`).whereNot(
+            "role",
+            authen_role
+          );
           qb.orderBy("updated_at", "DESC");
         });
         let users = await users_query.fetchPage({
@@ -174,14 +213,14 @@ class UsersController {
             "status_name",
             "id_status_fk",
             "role",
-            "check"
+            "check",
 
             //update
           ],
           pageSize: input.per_page, // Defaults to 10 if not specified
           page: input.page, // Defaults to 1 if not specified
         });
-        
+
         users = users.toJSON();
         let count = await users_query.count();
 

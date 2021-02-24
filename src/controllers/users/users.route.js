@@ -11,7 +11,7 @@ app.post("/search", new Users().search);
 app.get("/showdb", [new AuthenMiddleware().verifyJWT], new Users().showDB);
 app.post("/showbyuser", [new AuthenMiddleware().verifyJWT], new Users().showAllUser); // change to method post
 app.post("/create", new Users().createUser);
-
+// app.post("/filter", new Users().filterData);
 app.put(
   "/update/:user_id",
   [new AuthenMiddleware().verifyJWT],

@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express.Router();
 const LeaveWork = require("./leaveWork");
-
 app.get("", (req, res) => {
   res.send("api leavework is running");
 });
@@ -20,6 +19,7 @@ const uploads = multer({
 });
 app.post("/upload", [uploads.single("file")], new LeaveWork().uploadfile);
 app.post("/createleave", new LeaveWork().createLeave);
+app.post("/filter", new LeaveWork().filterData);
 // app.post("/showleave", new LeaveWork().showLeave);
 app.get("/getstatus", new LeaveWork().showStatus);
 app.put("/update/:leave_id", new LeaveWork().updateLeave);
