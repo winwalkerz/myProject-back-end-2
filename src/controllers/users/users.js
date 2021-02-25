@@ -20,8 +20,9 @@ class UsersController {
           qb.where("first_name", "LIKE", `%${input.search}%`);
           qb.orWhere("last_name", "LIKE", `%${input.search}%`);
           qb.orWhere("email", "LIKE", `%${input.search}%`);
+          qb.whereNot('role', admin)
         }
-        qb.orderBy("id", "DESC");
+        qb.orderBy("id", "ASC");
       });
       // console.log("this is log",users_query)
       let users = await users_query.fetchPage({
@@ -45,6 +46,8 @@ class UsersController {
     }
   }
 
+  
+
   async createUser(req, res) {
     try {
       let input = req.body;
@@ -53,6 +56,7 @@ class UsersController {
       input.last_name = input.last_name || "";
       input.role = input.role || "";
       input.position = input.position || "";
+      input.max_days = input.max_days || "";
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -83,6 +87,7 @@ class UsersController {
         password: password,
         role: input.role,
         position: input.position,
+        max_days:input.max_days,
       }).save();
 
       res.status(200).json({
@@ -121,6 +126,8 @@ class UsersController {
             "type",
             "id_status_fk",
             "status_name",
+            "max_days",
+            "current_day"
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["leavework.created_at"]
@@ -214,6 +221,8 @@ class UsersController {
             "id_status_fk",
             "role",
             "check",
+            "max_days",
+            "current_day"
 
             //update
           ],
