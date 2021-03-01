@@ -216,7 +216,7 @@ class LeaveworkController {
           date_end: input.date_end,
           type: input.type,
           id_status_fk: input.id_status_fk,
-          check: input.check,
+          check: 1,
         },
         { methods: "update", patch: true }
       );
