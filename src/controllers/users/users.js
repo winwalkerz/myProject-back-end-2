@@ -20,7 +20,7 @@ class UsersController {
           qb.where("first_name", "LIKE", `%${input.search}%`);
           qb.orWhere("last_name", "LIKE", `%${input.search}%`);
           qb.orWhere("email", "LIKE", `%${input.search}%`);
-          qb.whereNot('role', admin)
+          qb.whereNot("role", admin);
         }
         qb.orderBy("id", "ASC");
       });
@@ -45,8 +45,6 @@ class UsersController {
       });
     }
   }
-
-  
 
   async createUser(req, res) {
     try {
@@ -87,7 +85,7 @@ class UsersController {
         password: password,
         role: input.role,
         position: input.position,
-        max_days:input.max_days,
+        max_days: input.max_days,
       }).save();
 
       res.status(200).json({
@@ -127,7 +125,7 @@ class UsersController {
             "id_status_fk",
             "status_name",
             "max_days",
-            "current_day"
+            "current_day",
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["leavework.created_at"]
@@ -222,7 +220,7 @@ class UsersController {
             "role",
             "check",
             "max_days",
-            "current_day"
+            "current_day",
 
             //update
           ],
@@ -252,12 +250,12 @@ class UsersController {
       let authen = req.authen;
       // console.log(authen.id, req.params.user_id)
       let user_id = req.params.user_id;
-      if (authen.id != user_id) {
+      if (authen.role != "admin") {
         throw new Error("ไม่มีสิทธิ์เข้าถึง.");
       }
 
-      input.name = input.name || "";
-      if (!input.name) {
+      input.name = input.first_name || "";
+      if (!input.first_name) {
         throw new Error("Require name.");
       }
 
@@ -269,7 +267,7 @@ class UsersController {
 
       await user.save(
         {
-          name: input.name,
+          first_name: input.first_name,
         },
         { methods: "update", patch: true }
       );
@@ -289,7 +287,7 @@ class UsersController {
     try {
       let authen = req.authen;
       let user_id = req.params.user_id;
-      if (authen.id != user_id) {
+      if (authen.role != "admin") {
         throw new Error("ไม่มีสิทธิ์เข้าถึง.");
       }
       // check
