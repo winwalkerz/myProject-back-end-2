@@ -18,6 +18,7 @@ class LeaveworkController {
       input.description = input.description || "";
       input.file = input.file || "";
       input.check = input.check;
+      input.allday = input.allday || "";
       // await new Leavework({
       //   id_users: input.id_users,
       //   date_time: input.date_time,
@@ -32,6 +33,7 @@ class LeaveworkController {
         description: input.description,
         file: input.file,
         check: input.check,
+        allday:input.allday
       }).save();
 
       // .from("user")
@@ -234,8 +236,9 @@ class LeaveworkController {
   async deleteLeave(req, res) {
     try {
       let leave_id = req.params.leave_id;
+      let input = req.body;
       let leave = await LeaveworkModel.where("id", leave_id).fetch();
-      if (!leave) {
+      if (input.check == "'0'") {
         throw new Error("useless.");
       }
 

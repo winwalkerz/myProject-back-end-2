@@ -109,6 +109,7 @@ class UsersController {
             .innerJoin("users", "users.id", "leavework.id_user_fk")
             .innerJoin("status", "status.id", "leavework.id_status_fk");
           qb.where("users.id", "=", authen_id);
+          qb.orderBy("updated_at", "DESC");
         });
         // console.log(typeof users_query)
         let users = await users_query.fetchPage({
@@ -126,6 +127,8 @@ class UsersController {
             "status_name",
             "max_days",
             "current_day",
+            "check",
+            "allday"
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["leavework.created_at"]
@@ -134,14 +137,14 @@ class UsersController {
         });
         // console.log(users)
         users = users.toJSON();
-        // console.log(users);
+        console.log(users);
         let count = await users_query.count();
 
         res.status(200).json({
           count: count,
           data: users,
         });
-        console.log(users);
+        // console.log(users);
       }
     } catch (err) {
       console.log(err.stack);
@@ -221,7 +224,7 @@ class UsersController {
             "check",
             "max_days",
             "current_day",
-
+            "allday"
             //update
           ],
           pageSize: input.per_page, // Defaults to 10 if not specified
@@ -254,9 +257,17 @@ class UsersController {
         throw new Error("ไม่มีสิทธิ์เข้าถึง.");
       }
 
-      input.name = input.first_name || "";
+      input.first_name = input.first_name || "";
       if (!input.first_name) {
-        throw new Error("Require name.");
+        throw new Error("Require full name.");
+      }
+      input.last_name = input.last_name || "";
+      if (!input.last_name) {
+        throw new Error("Require full name.");
+      }
+      input.email = input.email || "";
+      if (!input.email) {
+        throw new Error("Require email.");
       }
 
       // check
@@ -268,6 +279,12 @@ class UsersController {
       await user.save(
         {
           first_name: input.first_name,
+          last_name:input.last_name,
+          email: input.email,
+          password:input.password,
+          position: input.position,
+          max_days:input.max_days
+
         },
         { methods: "update", patch: true }
       );

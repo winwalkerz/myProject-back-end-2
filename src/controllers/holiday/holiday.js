@@ -30,7 +30,10 @@ class HolidayController {
   async getHoliday(req, res) {
     try {
       let holiday_q = HolidayModel;
-      let holiday = await holiday_q.fetchPage({});
+      let holiday = await holiday_q.fetchPage({
+        column:["*"],
+        pageSize:100
+      });
 
       holiday = holiday.toJSON();
       let count = await holiday_q.count();
