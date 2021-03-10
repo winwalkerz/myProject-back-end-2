@@ -102,7 +102,9 @@ class UsersController {
     try {
       let authen = req.authen;
       let authen_id = req.authen.id;
-      // console.log(authen);
+      let input = req.body;
+      input.page = input.page || 1;
+      input.per_page = input.per_page || 10;
       if (authen) {
         let users_query = Users.query((qb) => {
           qb.from("leavework")
@@ -128,12 +130,13 @@ class UsersController {
             "max_days",
             "current_day",
             "check",
-            "allday"
+            "allday",
+            "file",
           ],
           //เลือก colum ตาม db ของเราด้วย++++++++++
           // columns:["leavework.created_at"]
-          // page: in, put.page,
-          // pageSize: input.per_page,
+          page: input.page,
+          pageSize: input.per_page,
         });
         // console.log(users)
         users = users.toJSON();
@@ -224,8 +227,8 @@ class UsersController {
             "check",
             "max_days",
             "current_day",
-            "allday"
-            //update
+            "allday",
+            "file"
           ],
           pageSize: input.per_page, // Defaults to 10 if not specified
           page: input.page, // Defaults to 1 if not specified
@@ -279,12 +282,11 @@ class UsersController {
       await user.save(
         {
           first_name: input.first_name,
-          last_name:input.last_name,
+          last_name: input.last_name,
           email: input.email,
-          password:input.password,
+          password: input.password,
           position: input.position,
-          max_days:input.max_days
-
+          max_days: input.max_days,
         },
         { methods: "update", patch: true }
       );

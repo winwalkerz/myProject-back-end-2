@@ -26,8 +26,8 @@ var serviceAccount = require("../internship-nodejs-example/cert/leavework-7c96d-
 // ต้องไปสร้าง bucket ก่อนเเล้วเอา url bucket มาใส่ใน storageBucket (upload คือ ชือฐานข้อมูล)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL:"https://leavework-7c96d.firebaseio.com",
-  storageBucket: "gs://leavework-7c96d.appspot.com",
+    databaseURL: "https://upload-5137e.firebaseio.com",
+    storageBucket: "gs://upload-5137e.appspot.com/"
 });
 //////////////////////////////////////////////////////////////////////////////
 

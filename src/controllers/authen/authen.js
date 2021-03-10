@@ -35,6 +35,7 @@ class AuthenController {
         email: user.email,
         role: user.role,
         max_days: user.max_days,
+        // position:user.position
       });
 
       res.status(200).json({
