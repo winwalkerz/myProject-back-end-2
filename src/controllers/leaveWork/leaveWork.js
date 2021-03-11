@@ -33,7 +33,7 @@ class LeaveworkController {
         description: input.description,
         file: input.file,
         check: input.check,
-        allday:input.allday
+        allday: input.allday,
       }).save();
 
       // .from("user")
@@ -218,7 +218,38 @@ class LeaveworkController {
           date_end: input.date_end,
           type: input.type,
           id_status_fk: input.id_status_fk,
-          check: 1,
+          allday: input.allday,
+        },
+        { methods: "update", patch: true }
+      );
+
+      res.status(200).json({
+        message: "complete",
+      });
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+  async updateLeaveAdmin(req, res) {
+    try {
+      let input = req.body;
+      let leave_id = req.params.leave_id;
+      let leave = await LeaveworkModel.where("id", leave_id).fetch();
+      if (!leave) {
+        throw new Error("useless.");
+      }
+      await leave.save(
+        {
+          description: input.description,
+          date_start: input.date_start,
+          date_end: input.date_end,
+          type: input.type,
+          id_status_fk: input.id_status_fk,
+          allday: input.allday,
+          check:1
         },
         { methods: "update", patch: true }
       );

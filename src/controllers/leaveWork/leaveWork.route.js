@@ -23,5 +23,6 @@ app.post("/filter", new LeaveWork().filterData);
 // app.post("/showleave", new LeaveWork().showLeave);
 app.get("/getstatus", new LeaveWork().showStatus);
 app.put("/update/:leave_id", new LeaveWork().updateLeave);
+app.put("/updateadmin/:leave_id", new LeaveWork().updateLeaveAdmin);
 app.delete("/delete/:leave_id", new LeaveWork().deleteLeave);
 module.exports = app;
