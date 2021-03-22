@@ -209,7 +209,7 @@ class LeaveworkController {
       let leave_id = req.params.leave_id;
       let leave = await LeaveworkModel.where("id", leave_id).fetch();
       if (!leave) {
-        throw new Error("useless.");
+        throw new Error("ไม่มีรายการลาที่เลือก.");
       }
       await leave.save(
         {
@@ -270,7 +270,7 @@ class LeaveworkController {
       let input = req.body;
       let leave = await LeaveworkModel.where("id", leave_id).fetch();
       if (input.check == "'0'") {
-        throw new Error("useless.");
+        throw new Error("ไม่มีสิทธ์เข้าถึง.");
       }
 
       await leave.destroy({ require: false });

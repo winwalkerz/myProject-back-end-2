@@ -15,13 +15,13 @@ class AuthenMiddleware {
       console.log(req.authen);
       next();
     } catch (err) {
-    //   console.log(err.stack);
-    //   res.status(400).json({
-    //     message: err.message,
-    //   });
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
 
 
-    console.log("error this middleware")
+    // console.log("ไม่มีสิทธิ์เข้าถึง")
     }
   }
 }
