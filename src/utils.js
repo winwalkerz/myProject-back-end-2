@@ -19,6 +19,9 @@ class Utils {
     encryptPassword(password){
         return crypto.createHash('sha256').update(`${encryptKey}${password}`).digest('hex');
     }
+    // decryptPassword(password){
+    //    return crypto.createDecipheriv('sha256').update(`${password}`).digest('utf8');
+    // }
 
     signToken(data, expire = process.env.jwt_expire){
         var cert = fs.readFileSync(`${process.cwd()}/cert/private.key`);

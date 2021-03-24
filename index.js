@@ -21,7 +21,7 @@ app.use("/api", apiRoutes); // ถ้าเรียก /api ให้เรี�
 
 var admin = require("firebase-admin");
 
-var serviceAccount = require("../internship-nodejs-example/cert/leavework-7c96d-firebase-adminsdk-stc8h-9dbecfe072.json");
+var serviceAccount = require("./cert/leavework-7c96d-firebase-adminsdk-stc8h-9dbecfe072.json");
 
 // ต้องไปสร้าง bucket ก่อนเเล้วเอา url bucket มาใส่ใน storageBucket (upload คือ ชือฐานข้อมูล)
 admin.initializeApp({

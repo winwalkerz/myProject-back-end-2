@@ -55,6 +55,11 @@ class UsersController {
       input.role = input.role || "";
       input.position = input.position || "";
       input.max_days = input.max_days || "";
+      input.password = input.password || "";
+      input.checkpassword = input.checkpassword || "";
+      
+      
+     
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -70,13 +75,27 @@ class UsersController {
         throw new Error("Require password.");
       }
 
+      if(input.checkpassword != input.password){
+        throw new Error("Two passwords that you enter is inconsistent!")
+      }
+
+      if (!input.position) {
+        throw new Error("Require position.");
+      }
+     
       let password = new Utils().encryptPassword(input.password);
+      
+
+      // if (password != checkpassword){
+      //   throw new Error("Two passwords that you enter is inconsistent!");
+      // }
 
       // check
       let user = await Users.where("email", input.email).fetch();
       if (user) {
         throw new Error("มีผู้ใช้งานนี้แล้ว.");
       }
+      
 
       await new Users({
         email: input.email,
@@ -86,6 +105,7 @@ class UsersController {
         role: input.role,
         position: input.position,
         max_days: input.max_days,
+
       }).save();
 
       res.status(200).json({
@@ -262,16 +282,27 @@ class UsersController {
 
       input.first_name = input.first_name || "";
       if (!input.first_name) {
-        throw new Error("Require full name.");
+        throw new Error("Require firstname.");
       }
       input.last_name = input.last_name || "";
       if (!input.last_name) {
-        throw new Error("Require full name.");
+        throw new Error("Require lastname.");
       }
       input.email = input.email || "";
       if (!input.email) {
         throw new Error("Require email.");
       }
+
+      input.password = input.password || "";
+      if (!input.password){
+        throw new Error("Require new password.");
+      }
+      input.checkpassword = input.checkpassword || "";
+      if(input.checkpassword != input.password){
+        throw new Error("Two passwords that you enter is inconsistent!")
+      }
+
+      let password = new Utils().encryptPassword(input.password);
 
       // check
       let user = await Users.where("id", user_id).fetch();
@@ -284,7 +315,7 @@ class UsersController {
           first_name: input.first_name,
           last_name: input.last_name,
           email: input.email,
-          password: input.password,
+          password: password,
           position: input.position,
           max_days: input.max_days,
         },
