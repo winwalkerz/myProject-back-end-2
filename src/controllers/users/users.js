@@ -55,6 +55,7 @@ class UsersController {
       input.role = input.role || "";
       input.position = input.position || "";
       input.max_days = input.max_days || "";
+      input.checkpassword = input.checkpassword || "";
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -68,6 +69,18 @@ class UsersController {
 
       if (!input.password) {
         throw new Error("Require password.");
+      }
+
+      if (input.password != input.checkpassword){
+        throw new Error("two password is not matching")
+      }
+
+      if (!input.sex){
+        throw new Error("Require gender")
+      }
+
+      if (!input.position){
+        throw new Error("Require position")
       }
 
       let password = new Utils().encryptPassword(input.password);
@@ -262,15 +275,30 @@ class UsersController {
 
       input.first_name = input.first_name || "";
       if (!input.first_name) {
-        throw new Error("Require full name.");
+        throw new Error("Require firstname.");
       }
       input.last_name = input.last_name || "";
       if (!input.last_name) {
-        throw new Error("Require full name.");
+        throw new Error("Require lastname.");
       }
       input.email = input.email || "";
       if (!input.email) {
         throw new Error("Require email.");
+      }
+
+      input.password = input.password || "";
+      if (!input.password){
+        throw new Error("Require password");
+      }
+
+      input.checkpassword = input.checkpassword || "";
+      if (input.password != input.checkpassword) {
+        throw new Error("two password is not matching")
+      }
+
+      input.position = input.position || "";
+      if(!input.position) {
+        throw new Error("Require position")
       }
 
       // check
@@ -278,13 +306,14 @@ class UsersController {
       if (!user) {
         throw new Error("ไม่มีผู้ใช้งานนี้.");
       }
+      let password = new Utils().encryptPassword(input.password);
 
       await user.save(
         {
           first_name: input.first_name,
           last_name: input.last_name,
           email: input.email,
-          password: input.password,
+          password: password,
           position: input.position,
           max_days: input.max_days,
         },

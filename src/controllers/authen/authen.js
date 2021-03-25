@@ -2,7 +2,7 @@ const Users = require("./../../models/users");
 const Utils = require("./../../utils");
 
 class AuthenController {
-  constructor() {}
+  constructor() { }
 
   async login(req, res) {
     try {
@@ -35,6 +35,8 @@ class AuthenController {
         email: user.email,
         role: user.role,
         max_days: user.max_days,
+        sex:user.sex,
+        // password: user.password,
         // position:user.position
       });
 
