@@ -24,6 +24,19 @@ class LeaveworkController {
       //   date_time: input.date_time,
       //   type_leave: input.type_leave,
       // }).save();
+
+      if (!input.type) {
+        throw new Error("กรุณาเลือกประเภทการลางาน");
+      }
+
+      if (!input.date_start) {
+        throw new Error("กรุณาระบุวันเริ่มต้น");
+      }
+
+      if (!input.date_end){
+        throw new Error("กรุณาระบุวันสิ้นสุด")
+      }
+      
       await new LeaveworkModel({
         id_user_fk: input.id_user_fk,
         id_status_fk: input.id_status_fk,
