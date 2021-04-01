@@ -267,8 +267,8 @@ class UsersController {
     try {
       let input = req.body;
       let authen = req.authen;
-      // console.log(authen.id, req.params.user_id)
       let user_id = req.params.user_id;
+
       if (authen.role != "admin") {
         throw new Error("ไม่มีสิทธิ์เข้าถึง.");
       }
@@ -290,11 +290,14 @@ class UsersController {
       if (!input.password){
         throw new Error("Require password");
       }
-
+      
+     
       input.checkpassword = input.checkpassword || "";
       if (input.password != input.checkpassword) {
         throw new Error("two password is not matching")
       }
+
+     
 
       input.position = input.position || "";
       if(!input.position) {
@@ -307,6 +310,7 @@ class UsersController {
         throw new Error("ไม่มีผู้ใช้งานนี้.");
       }
       let password = new Utils().encryptPassword(input.password);
+      
 
       await user.save(
         {

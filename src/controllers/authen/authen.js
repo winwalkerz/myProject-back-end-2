@@ -44,8 +44,8 @@ class AuthenController {
         type: "Bearer",
         token: token,
       });
-
-      console.log(user);
+      console.log(token)
+      // console.log(user);
     } catch (err) {
       console.log(err.stack);
       res.status(400).json({
