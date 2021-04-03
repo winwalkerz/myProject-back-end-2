@@ -6,7 +6,7 @@ const Utils = require("./../../utils");
 
 //           -----------------------Pagination-----------------------
 class UsersController {
-  constructor() {}
+  constructor() { }
 
   async search(req, res) {
     try {
@@ -30,13 +30,47 @@ class UsersController {
         page: input.page,
         pageSize: input.per_page,
       });
-      // console.log("this is a type:",typeof users_query)
+      
       users = users.toJSON();
+      
       let count = await users_query.count();
 
       res.status(200).json({
         count: count,
         data: users,
+      });
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+
+  async searchByid(req, res) {
+    try {
+      let authen = req.authen;
+      let user_id = req.params.user_id;
+      if (authen.role !== "admin") {
+        throw new Error("ไม่มีสิทธิ์เข้าถึง.");
+      }
+      let users_query = Users.query((qb) => {
+        qb.where("id", user_id);
+      });
+      let users = await users_query.fetchPage({
+        columns: ["*"]
+      });
+      // let password = await users_query.fetchPage({
+      //   columns:["password"]
+      // });
+      // password = password.toJSON();
+      // console.log(password[0].password)
+      // let passwordDe = new Utils().decryptPassword(password[0].password);
+      // let pass2 = passwordDe
+      users = users.toJSON();
+      res.status(200).json({
+        data: users,
+        // password: pass2,
       });
     } catch (err) {
       console.log(err.stack);
@@ -54,7 +88,7 @@ class UsersController {
       input.last_name = input.last_name || "";
       input.role = input.role || "";
       input.position = input.position || "";
-      input.max_days = input.max_days || "";
+      input.sex = input.sex || "";
       input.checkpassword = input.checkpassword || "";
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
@@ -71,15 +105,15 @@ class UsersController {
         throw new Error("Require password.");
       }
 
-      if (input.password != input.checkpassword){
+      if (input.password != input.checkpassword) {
         throw new Error("two password is not matching")
       }
 
-      if (!input.sex){
+      if (!input.sex) {
         throw new Error("Require gender")
       }
 
-      if (!input.position){
+      if (!input.position) {
         throw new Error("Require position")
       }
 
@@ -98,7 +132,7 @@ class UsersController {
         password: password,
         role: input.role,
         position: input.position,
-        max_days: input.max_days,
+        sex: input.sex,
       }).save();
 
       res.status(200).json({
@@ -140,8 +174,7 @@ class UsersController {
             "type",
             "id_status_fk",
             "status_name",
-            "max_days",
-            "current_day",
+            "sex",
             "check",
             "allday",
             "file",
@@ -238,8 +271,7 @@ class UsersController {
             "id_status_fk",
             "role",
             "check",
-            "max_days",
-            "current_day",
+            "sex",
             "allday",
             "file"
           ],
@@ -286,31 +318,35 @@ class UsersController {
         throw new Error("Require email.");
       }
 
-      input.password = input.password || "";
-      if (!input.password){
-        throw new Error("Require password");
-      }
-      
-     
+      input.newpassword = input.newpassword || "";
       input.checkpassword = input.checkpassword || "";
-      if (input.password != input.checkpassword) {
-        throw new Error("two password is not matching")
-      }
 
-     
+
+      console.log('new pass is ' + input.newpassword)
+      console.log('check pass is '  + input.checkpassword)
+      
+      if (input.newpassword != input.checkpassword) {
+        throw new Error("two password is not matching")
+        
+      }
 
       input.position = input.position || "";
       if(!input.position) {
         throw new Error("Require position")
       }
+      
 
       // check
       let user = await Users.where("id", user_id).fetch();
       if (!user) {
         throw new Error("ไม่มีผู้ใช้งานนี้.");
       }
-      let password = new Utils().encryptPassword(input.password);
+     
+      let password = new Utils().encryptPassword(input.newpassword);
       
+      
+
+
 
       await user.save(
         {
@@ -319,7 +355,7 @@ class UsersController {
           email: input.email,
           password: password,
           position: input.position,
-          max_days: input.max_days,
+          sex: input.sex,
         },
         { methods: "update", patch: true }
       );
@@ -329,6 +365,8 @@ class UsersController {
       });
     } catch (err) {
       console.log(err.stack);
+      // console.log(input.password)
+      // console.log(input.checkpassword)
       res.status(400).json({
         message: err.message,
       });
