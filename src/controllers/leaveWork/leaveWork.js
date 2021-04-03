@@ -6,7 +6,7 @@ const StatusModel = require("./../../models/status");
 const fs = require("fs");
 var admin = require("firebase-admin");
 class LeaveworkController {
-  constructor() {}
+  constructor() { }
   async createLeave(req, res) {
     try {
       let input = req.body;
@@ -249,7 +249,7 @@ class LeaveworkController {
           type: input.type,
           id_status_fk: input.id_status_fk,
           allday: input.allday,
-          check:1
+          check: 1
         },
         { methods: "update", patch: true }
       );
@@ -308,6 +308,48 @@ class LeaveworkController {
         message: err.message,
       });
     }
+  }
+
+  //ฟังก์ชันสำหรับรวมวันหยุดแต่ละประเภท
+  async searchByType(req, res) {
+    try {
+      let authen_id = req.authen.id;
+      let data_q = LeaveworkModel.query((qb) => {
+        qb.where("id_user_fk", authen_id);
+      });
+      let data = await data_q.fetchPage({
+        columns: ["type", "allday"],
+        page: 1,
+        pageSize: 100,
+      });
+      let count = await data_q.count();
+      data = data.toJSON();
+      let sumday = [0,0,0,0,0,0];
+      for (let i = 0; i < count; i++) {
+        if (data[i].type == 'ลากิจ') {
+          sumday[0] = sumday[0] + data[i].allday;
+        } else if (data[i].type == 'ลาป่วย') {
+          sumday[1] = sumday[1] + data[i].allday;
+        } else if (data[i].type == 'ลาทำหมัน') {
+          sumday[2] = sumday[2] + data[i].allday;
+        } else if (data[i].type == 'ลาฝึกอบรม') {
+          sumday[3] = sumday[3] + data[i].allday;
+        } else if (data[i].type == 'ลารับราชการทหาร') {
+          sumday[4] = sumday[4] + data[i].allday;
+        } else if (data[i].type == 'ลาคลอดบุตร') {
+          sumday[5] = sumday[5] + data[i].allday;
+        }
+      }
+      res.status(200).json({
+        sumHoliday: sumday,
+      });
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+
   }
 }
 module.exports = LeaveworkController;

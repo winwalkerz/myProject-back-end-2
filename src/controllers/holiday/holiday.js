@@ -10,6 +10,19 @@ class HolidayController {
       input.date = input.date || "";
       input.content = input.content || "";
       input.type = input.type || "";
+
+      if (!input.date) {
+        throw new Error("Require date.");
+      }
+
+      if(!input.content){
+        throw new Error("Require detail of holiday");
+      }
+
+      if(!input.type){
+        throw new Error("Require type of holiday")
+      }
+
       await new HolidayModel({
         date: input.date,
         content: input.content,
