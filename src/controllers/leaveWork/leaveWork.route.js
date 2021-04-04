@@ -22,6 +22,7 @@ app.post("/upload", [uploads.single("file")], new LeaveWork().uploadfile);
 app.post("/createleave", new LeaveWork().createLeave);
 app.post("/filter", new LeaveWork().filterData);
 // app.post("/showleave", new LeaveWork().showLeave);
+app.post("/searchbyid/:leave_id", [new AuthenMiddleware().verifyJWT], new LeaveWork().searchByID);
 app.get("/getstatus", new LeaveWork().showStatus);
 app.get("/searchdata/:leave_id", [new AuthenMiddleware().verifyJWT], new LeaveWork().searchByType);
 app.put("/update/:leave_id", new LeaveWork().updateLeave);
