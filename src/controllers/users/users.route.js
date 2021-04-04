@@ -8,7 +8,7 @@ app.get("", (req, res) => {
 });
 
 app.post("/search", new Users().search);
-app.post("/searchid/:user_id", [new AuthenMiddleware().verifyJWT], new Users().searchByid);
+app.get("/searchid/:user_id", [new AuthenMiddleware().verifyJWT], new Users().searchByid);
 app.post("/showdb", [new AuthenMiddleware().verifyJWT], new Users().showDB);
 app.post("/showbyuser", [new AuthenMiddleware().verifyJWT], new Users().showAllUser); // change to method post
 app.post("/create", new Users().createUser);

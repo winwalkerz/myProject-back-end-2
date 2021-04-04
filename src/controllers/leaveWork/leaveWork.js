@@ -326,10 +326,11 @@ class LeaveworkController {
   //ฟังก์ชันสำหรับรวมวันหยุดแต่ละประเภท
   async searchByType(req, res) {
     try {
-      let authen_id = req.authen.id;
+      let leave_id = req.params.leave_id;
       let data_q = LeaveworkModel.query((qb) => {
-        qb.where("id_user_fk", authen_id);
+        qb.where("id_user_fk", leave_id);
       });
+
       let data = await data_q.fetchPage({
         columns: ["type", "allday"],
         page: 1,
@@ -337,6 +338,7 @@ class LeaveworkController {
       });
       let count = await data_q.count();
       data = data.toJSON();
+      console.log(data)
       let sumday = [0,0,0,0,0,0];
       for (let i = 0; i < count; i++) {
         if (data[i].type == 'ลากิจ') {

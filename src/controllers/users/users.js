@@ -51,6 +51,7 @@ class UsersController {
     try {
       let authen = req.authen;
       let user_id = req.params.user_id;
+      console.log(req.authen);
       if (authen.role !== "admin") {
         throw new Error("ไม่มีสิทธิ์เข้าถึง.");
       }
