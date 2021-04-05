@@ -274,7 +274,8 @@ class UsersController {
             "check",
             "sex",
             "allday",
-            "file"
+            "file",
+            "id_user_fk"
           ],
           pageSize: input.per_page, // Defaults to 10 if not specified
           page: input.page, // Defaults to 1 if not specified

@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express.Router()
+const AuthenMiddleware = require("./middleware/authen");
 
 // Import Routes
 const UsersRoute = require('./controllers/users/users.route')
@@ -12,7 +13,7 @@ app.get('', (req, res)=>{
 
 // init routes
 app.use('/authen', AuthenRoute)
-app.use('/users', UsersRoute)
+app.use('/users',  UsersRoute)
 app.use('/leaveWork',LeaveWorkRoute )
 app.use('/holiday',HolidayRoute)
 module.exports = app

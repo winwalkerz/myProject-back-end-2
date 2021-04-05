@@ -21,6 +21,7 @@ const uploads = multer({
 app.post("/upload", [uploads.single("file")], new LeaveWork().uploadfile);
 app.post("/createleave", new LeaveWork().createLeave);
 app.post("/filter", new LeaveWork().filterData);
+app.post("/searchbyid/:leave_id",  new LeaveWork().searchByID);
 // app.post("/showleave", new LeaveWork().showLeave);
 app.get("/getstatus", new LeaveWork().showStatus);
 app.get("/searchdata/:leave_id", [new AuthenMiddleware().verifyJWT], new LeaveWork().searchByType);

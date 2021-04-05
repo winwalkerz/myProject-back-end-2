@@ -328,7 +328,7 @@ class LeaveworkController {
     try {
       let leave_id = req.params.leave_id;
       let data_q = LeaveworkModel.query((qb) => {
-        qb.where("id_user_fk", leave_id);
+        qb.where("id_user_fk", leave_id).whereNot("id_status_fk",3);
       });
 
       let data = await data_q.fetchPage({
@@ -339,7 +339,7 @@ class LeaveworkController {
       let count = await data_q.count();
       data = data.toJSON();
       console.log(data)
-      let sumday = [0,0,0,0,0,0];
+      let sumday = [0,0,0,0,0,0,0];
       for (let i = 0; i < count; i++) {
         if (data[i].type == 'ลากิจ') {
           sumday[0] = sumday[0] + data[i].allday;
@@ -353,7 +353,10 @@ class LeaveworkController {
           sumday[4] = sumday[4] + data[i].allday;
         } else if (data[i].type == 'ลาคลอดบุตร') {
           sumday[5] = sumday[5] + data[i].allday;
+        } else if (data[i].type == 'ลาหยุดพักผ่อนประจำปี') {
+          sumday[6] = sumday[6] + data[i].allday;
         }
+        
       }
       res.status(200).json({
         sumHoliday: sumday,
@@ -364,7 +367,62 @@ class LeaveworkController {
         message: err.message,
       });
     }
-
   }
+
+  //search leave by id
+  async searchByID(req, res) {
+    try {
+      let authen = req.authen;
+      let input = req.body;
+      let leave_id = req.params.leave_id;
+      input.page = input.page  || 1;
+      input.per_page = input.per_page  || 10;
+     
+        let users_query = UsersModel.query((qb) => {
+          qb.from("leavework")
+            .innerJoin("users", "users.id", "leavework.id_user_fk")
+            .innerJoin("status", "status.id", "leavework.id_status_fk");
+          qb.where("users.id", "=", leave_id);
+          qb.orderBy("updated_at", "DESC");
+        });
+        // console.log(typeof users_query)
+        let users = await users_query.fetchPage({
+          columns: [
+            "leavework.id",
+            "description",
+            "created_at",
+            "first_name",
+            "last_name",
+            "email",
+            "date_start",
+            "date_end",
+            "type",
+            "id_status_fk",
+            "status_name",
+            "sex",
+            "check",
+            "allday",
+            "file",
+          ],
+          page: input.page,
+          pageSize: input.per_page,
+        });
+        users = users.toJSON();
+        console.log(users);
+        let count = await users_query.count();
+
+        res.status(200).json({
+          count: count,
+          data: users,
+        });
+      
+    } catch (err) {
+      console.log(err.stack);
+      res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+  
 }
 module.exports = LeaveworkController;
