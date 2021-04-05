@@ -328,7 +328,7 @@ class LeaveworkController {
     try {
       let leave_id = req.params.leave_id;
       let data_q = LeaveworkModel.query((qb) => {
-        qb.where("id_user_fk", leave_id).whereNot("id_status_fk",3);
+        qb.where("id_user_fk", leave_id).where("id_status_fk",2);
       });
 
       let data = await data_q.fetchPage({

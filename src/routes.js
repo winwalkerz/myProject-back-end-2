@@ -13,7 +13,7 @@ app.get('', (req, res)=>{
 
 // init routes
 app.use('/authen', AuthenRoute)
-app.use('/users',  UsersRoute)
+app.use('/users', UsersRoute)
 app.use('/leaveWork',LeaveWorkRoute )
 app.use('/holiday',HolidayRoute)
 module.exports = app
