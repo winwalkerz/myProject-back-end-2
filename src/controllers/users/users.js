@@ -14,7 +14,10 @@ class UsersController {
       input.search = input.search || "";
       input.page = input.page || 1;
       input.per_page = input.per_page || 10;
-
+      let authen = req.authen;
+      if (authen.role != "admin") {
+        throw new Error("ไม่มีสิทธิ์เข้าถึง.");
+      }
       let users_query = Users.query((qb) => {
         if (input.search) {
           qb.where("first_name", "LIKE", `%${input.search}%`);
@@ -61,13 +64,6 @@ class UsersController {
       let users = await users_query.fetchPage({
         columns: ["*"]
       });
-      // let password = await users_query.fetchPage({
-      //   columns:["password"]
-      // });
-      // password = password.toJSON();
-      // console.log(password[0].password)
-      // let passwordDe = new Utils().decryptPassword(password[0].password);
-      // let pass2 = passwordDe
       users = users.toJSON();
       res.status(200).json({
         data: users,
@@ -91,6 +87,10 @@ class UsersController {
       input.position = input.position || "";
       input.sex = input.sex || "";
       input.checkpassword = input.checkpassword || "";
+      let authen = req.authen;
+      if (authen.role != "admin") {
+        throw new Error("ไม่มีสิทธิ์เข้าถึง.");
+      }
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -301,30 +301,52 @@ class UsersController {
     try {
       let input = req.body;
       let authen = req.authen;
-      // console.log(authen.id, req.params.user_id)
       let user_id = req.params.user_id;
+
       if (authen.role != "admin") {
         throw new Error("ไม่มีสิทธิ์เข้าถึง.");
       }
 
       input.first_name = input.first_name || "";
       if (!input.first_name) {
-        throw new Error("Require full name.");
+        throw new Error("Require firstname.");
       }
       input.last_name = input.last_name || "";
       if (!input.last_name) {
-        throw new Error("Require full name.");
+        throw new Error("Require lastname.");
       }
       input.email = input.email || "";
       if (!input.email) {
         throw new Error("Require email.");
       }
 
+      input.newpassword = input.newpassword || "";
+      input.checkpassword = input.checkpassword || "";
+
+
+      console.log('new pass is ' + input.newpassword)
+      console.log('check pass is '  + input.checkpassword)
+      
+      if (input.newpassword != input.checkpassword) {
+        throw new Error("two password is not matching")
+        
+      }
+
+      input.position = input.position || "";
+      if(!input.position) {
+        throw new Error("Require position")
+      }
+      
+
       // check
       let user = await Users.where("id", user_id).fetch();
       if (!user) {
         throw new Error("ไม่มีผู้ใช้งานนี้.");
       }
+     
+      let password = new Utils().encryptPassword(input.newpassword);
+      
+      
 
 
 
@@ -333,7 +355,7 @@ class UsersController {
           first_name: input.first_name,
           last_name: input.last_name,
           email: input.email,
-          password: input.password,
+          password: password,
           position: input.position,
           sex: input.sex,
         },
@@ -345,6 +367,8 @@ class UsersController {
       });
     } catch (err) {
       console.log(err.stack);
+      // console.log(input.password)
+      // console.log(input.checkpassword)
       res.status(400).json({
         message: err.message,
       });

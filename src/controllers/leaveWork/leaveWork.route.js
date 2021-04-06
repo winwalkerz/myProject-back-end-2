@@ -19,13 +19,12 @@ const uploads = multer({
   },
 });
 app.post("/upload", [uploads.single("file")], new LeaveWork().uploadfile);
-app.post("/createleave", new LeaveWork().createLeave);
-app.post("/filter", new LeaveWork().filterData);
-// app.post("/showleave", new LeaveWork().showLeave);
+app.post("/createleave", [new AuthenMiddleware().verifyJWT], new LeaveWork().createLeave);
+app.post("/filter", [new AuthenMiddleware().verifyJWT], new LeaveWork().filterData);
 app.post("/searchbyid/:leave_id", [new AuthenMiddleware().verifyJWT], new LeaveWork().searchByID);
-app.get("/getstatus", new LeaveWork().showStatus);
+app.get("/getstatus", [new AuthenMiddleware().verifyJWT], new LeaveWork().showStatus);
 app.get("/searchdata/:leave_id", [new AuthenMiddleware().verifyJWT], new LeaveWork().searchByType);
 app.put("/update/:leave_id", new LeaveWork().updateLeave);
-app.put("/updateadmin/:leave_id", new LeaveWork().updateLeaveAdmin);
-app.delete("/delete/:leave_id", new LeaveWork().deleteLeave);
+app.put("/updateadmin/:leave_id", [new AuthenMiddleware().verifyJWT], new LeaveWork().updateLeaveAdmin);
+app.delete("/delete/:leave_id", [new AuthenMiddleware().verifyJWT], new LeaveWork().deleteLeave);
 module.exports = app;

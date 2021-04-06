@@ -19,11 +19,22 @@ class LeaveworkController {
       input.file = input.file || "";
       input.check = input.check;
       input.allday = input.allday || "";
-      // await new Leavework({
-      //   id_users: input.id_users,
-      //   date_time: input.date_time,
-      //   type_leave: input.type_leave,
-      // }).save();
+      let authen = req.authen;
+      if (!authen.role) {
+        throw new Error("ไม่มีสิทธิ์เข้าถึง.");
+      }
+      if (!input.type) {
+        throw new Error("กรุณาเลือกประเภทการลางาน");
+      }
+
+      if (!input.date_start) {
+        throw new Error("กรุณาระบุวันเริ่มต้น");
+      }
+
+      if (!input.date_end){
+        throw new Error("กรุณาระบุวันสิ้นสุด")
+      }
+      
       await new LeaveworkModel({
         id_user_fk: input.id_user_fk,
         id_status_fk: input.id_status_fk,
@@ -49,46 +60,14 @@ class LeaveworkController {
     }
   }
 
-  // async showLeave(req, res) {
-  //   try {
-  //     let input = req.body;
-  //     input.search = input.search || "";
-  //     input.page = input.page || 1;
-  //     input.per_page = input.per_page || 10;
-
-  //     let leave_query = LeaveworkModel.query((qb) => {
-  //       if (input.search) {
-  //         qb.where("id", "LIKE", `%${input.search}%`);
-  //         qb.orWhere("description", "LIKE", `%${input.search}%`);
-  //         qb.orWhere("email", "LIKE", `%${input.search}%`);
-  //       }
-  //       qb.orderBy("id", "DESC");
-  //     });
-  //     // console.log(types_query);
-  //     let types = await leave_query.fetchPage({
-  //       columns: ["*"],
-  //       page: input.page,
-  //       pageSize: input.per_page,
-  //     });
-
-  //     types = leave_query.toJSON();
-  //     // let count = await leave_query.count();
-
-  //     res.status(200).json({
-  //       // count: count,
-  //       data: types,
-  //     });
-  //     // console.log(users)
-  //   } catch (err) {
-  //     console.log(err.stack);
-  //     res.status(400).json({
-  //       message: err.message,
-  //     });
-  //   }
-  // }
+  
   async showStatus(req, res) {
     try {
       let status_q = StatusModel;
+      let authen = req.authen;
+      if (!authen.role) {
+        throw new Error("ไม่มีสิทธิ์เข้าถึง.");
+      }
       let status = await status_q.fetchPage({
         columns: ["*"],
       });
@@ -104,56 +83,7 @@ class LeaveworkController {
       });
     }
   }
-  // async filterData(req, res) {
-  //   try {
-  //     let input = req.body;
-  //     input.search = input.search || "";
-  //     // input.last_name = input.last_name || "";
-  //     input.page = input.page || 1;
-  //     input.per_page = input.per_page || 10;
-  //     if (input.search) {
-  //       let filter_q = LeaveworkModel.query((qb) => {
-
-  //         qb.from("leavework")
-  //           .innerJoin("users", "users.id", "leavework.id_user_fk")
-  //           .innerJoin("status", "status.id", "leavework.id_status_fk");
-  //         qb.where("first_name", "LIKE", `%${input.search}%`);
-  //         qb.orWhere("last_name", "LIKE", `%${input.search}%`);
-
-  //         // qb.orderBy("updated_at", "DESC");
-  //       });
-  //       let filters = await filter_q.fetchPage({
-  //         columns: [
-  //           "leavework.id",
-  //           "description",
-  //           "created_at",
-  //           "first_name",
-  //           "last_name",
-  //           "email",
-  //           "date_start",
-  //           "date_end",
-  //           "type",
-  //           "id_status_fk",
-  //           "status_name",
-  //         ],
-  //         page: input.page,
-  //         pageSize: input.per_page,
-  //       });
-  //       filters = filters.toJSON();
-  //       let count = await filter_q.count();
-
-  //       res.status(200).json({
-  //         count: count,
-  //         data: filters,
-  //       });
-  //     }
-  //   } catch (err) {
-  //     console.log(err.stack);
-  //     res.status(400).json({
-  //       message: err.message,
-  //     });
-  //   }
-  // }
+ 
   async filterData(req, res) {
     try {
       let input = req.body;
@@ -161,7 +91,10 @@ class LeaveworkController {
       // input.last_name = input.last_name || "";
       input.page = input.page || 1;
       input.per_page = input.per_page || 10;
-
+      let authen = req.authen;
+      if(authen.role !== "admin"){
+        throw new Error("ไม่มีสิทธิ์เข้าถึง.");
+      }
       let filter_q = LeaveworkModel.query((qb) => {
         qb.from("leavework")
           .innerJoin("users", "users.id", "leavework.id_user_fk")
@@ -237,9 +170,13 @@ class LeaveworkController {
     try {
       let input = req.body;
       let leave_id = req.params.leave_id;
+      let authen = req.authen;
+      if(authen.role !== "admin"){
+        throw new Error("ไม่มีสิทธิ์เข้าถึง.");
+      }
       let leave = await LeaveworkModel.where("id", leave_id).fetch();
       if (!leave) {
-        throw new Error("useless.");
+        throw new Error("ไม่มีรายการที่ระบุ.");
       }
       await leave.save(
         {
@@ -269,8 +206,11 @@ class LeaveworkController {
       let leave_id = req.params.leave_id;
       let input = req.body;
       let leave = await LeaveworkModel.where("id", leave_id).fetch();
+      if (!leave) {
+        throw new Error("ไม่มีรายการใช้งานนี้.");
+      }
       if (input.check == "'0'") {
-        throw new Error("ไม่มีสิทธ์เข้าถึง.");
+        throw new Error("ไม่สามารถลบรายการได้.");
       }
 
       await leave.destroy({ require: false });
@@ -315,9 +255,9 @@ class LeaveworkController {
     try {
       let leave_id = req.params.leave_id;
       let data_q = LeaveworkModel.query((qb) => {
-        qb.where("id_user_fk", leave_id);
+        qb.where("id_user_fk", leave_id).where("id_status_fk",2);
       });
-      
+
       let data = await data_q.fetchPage({
         columns: ["type", "allday"],
         page: 1,
@@ -326,7 +266,6 @@ class LeaveworkController {
       let count = await data_q.count();
       data = data.toJSON();
       console.log(data)
-      // console.log(count)
       let sumday = [0,0,0,0,0,0,0];
       for (let i = 0; i < count; i++) {
         if (data[i].type == 'ลากิจ') {
@@ -341,9 +280,10 @@ class LeaveworkController {
           sumday[4] = sumday[4] + data[i].allday;
         } else if (data[i].type == 'ลาคลอดบุตร') {
           sumday[5] = sumday[5] + data[i].allday;
-        }else if (data[i].type == 'ลาหยุดพักผ่อนประจำปี') {
+        } else if (data[i].type == 'ลาหยุดพักผ่อนประจำปี') {
           sumday[6] = sumday[6] + data[i].allday;
         }
+        
       }
       res.status(200).json({
         sumHoliday: sumday,
@@ -354,7 +294,6 @@ class LeaveworkController {
         message: err.message,
       });
     }
-
   }
 
   //search leave by id
@@ -363,9 +302,9 @@ class LeaveworkController {
       let authen = req.authen;
       let input = req.body;
       let leave_id = req.params.leave_id;
-      input.page = input.page || 1;
-      input.per_page = input.per_page || 10;
-      if (authen) {
+      input.page = input.page  || 1;
+      input.per_page = input.per_page  || 10;
+     
         let users_query = UsersModel.query((qb) => {
           qb.from("leavework")
             .innerJoin("users", "users.id", "leavework.id_user_fk")
@@ -403,7 +342,7 @@ class LeaveworkController {
           count: count,
           data: users,
         });
-      }
+      
     } catch (err) {
       console.log(err.stack);
       res.status(400).json({
@@ -411,5 +350,6 @@ class LeaveworkController {
       });
     }
   }
+  
 }
 module.exports = LeaveworkController;

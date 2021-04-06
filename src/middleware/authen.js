@@ -8,6 +8,7 @@ class AuthenMiddleware {
       let token = req.headers["authorization"].replace(/Bearer /, "");
       // console.log('token', token)
       var cert = fs.readFileSync(`${process.cwd()}/cert/public.key`);
+      console.log("This is Token : ",token)
       let decoded = jwt.verify(token, cert);
 
       // add request data

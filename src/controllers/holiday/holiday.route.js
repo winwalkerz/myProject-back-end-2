@@ -15,4 +15,10 @@ app.post("/search",
   [new AuthenMiddleware().verifyJWT], new Holiday().search);
 app.put("/update/:holiday_id",
   [new AuthenMiddleware().verifyJWT], new Holiday().updateHoliday);
+app.delete(
+    "/delete/:holiday_id",
+    [new AuthenMiddleware().verifyJWT],
+    new Holiday().deleteHoliday
+  );
+
 module.exports = app;

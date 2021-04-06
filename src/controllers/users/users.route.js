@@ -7,11 +7,11 @@ app.get("", (req, res) => {
   res.send("API users running.");
 });
 
-app.post("/search", new Users().search);
+app.post("/search", [new AuthenMiddleware().verifyJWT], new Users().search);
 app.get("/searchid/:user_id", [new AuthenMiddleware().verifyJWT], new Users().searchByid);
 app.post("/showdb", [new AuthenMiddleware().verifyJWT], new Users().showDB);
 app.post("/showbyuser", [new AuthenMiddleware().verifyJWT], new Users().showAllUser); // change to method post
-app.post("/create", new Users().createUser);
+app.post("/create", [new AuthenMiddleware().verifyJWT], new Users().createUser);
 // app.post("/filter", new Users().filterData);
 app.put(
   "/update/:user_id",
