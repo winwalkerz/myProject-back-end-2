@@ -68,8 +68,10 @@ class HolidayController {
         pageSize: input.per_page,
       })
       resHoliday = resHoliday.toJSON()
+      let count = await holiday_q.count();
       res.status(200).json({
-        data: resHoliday
+        data: resHoliday,
+        count: count,
       })
     } catch (err) {
       console.log(err.stack);

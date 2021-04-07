@@ -55,11 +55,15 @@ class UsersController {
       input.role = input.role || "";
       input.position = input.position || "";
       input.max_days = input.max_days || "";
+<<<<<<< HEAD
       input.password = input.password || "";
       input.checkpassword = input.checkpassword || "";
       
       
      
+=======
+      input.sex = input.sex ||"";
+>>>>>>> 62e5cef49b557fd9cf1377bd97d764a5bee00463
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -105,7 +109,11 @@ class UsersController {
         role: input.role,
         position: input.position,
         max_days: input.max_days,
+<<<<<<< HEAD
 
+=======
+        sex:input.sex,
+>>>>>>> 62e5cef49b557fd9cf1377bd97d764a5bee00463
       }).save();
 
       res.status(200).json({
@@ -148,7 +156,7 @@ class UsersController {
             "id_status_fk",
             "status_name",
             "max_days",
-            "current_day",
+            "sex",
             "check",
             "allday",
             "file",
@@ -246,7 +254,7 @@ class UsersController {
             "role",
             "check",
             "max_days",
-            "current_day",
+            "sex",
             "allday",
             "file"
           ],
@@ -318,6 +326,7 @@ class UsersController {
           password: password,
           position: input.position,
           max_days: input.max_days,
+          sex: input.sex,
         },
         { methods: "update", patch: true }
       );
