@@ -55,15 +55,7 @@ class UsersController {
       input.role = input.role || "";
       input.position = input.position || "";
       input.max_days = input.max_days || "";
-<<<<<<< HEAD
-      input.password = input.password || "";
-      input.checkpassword = input.checkpassword || "";
-      
-      
-     
-=======
       input.sex = input.sex ||"";
->>>>>>> 62e5cef49b557fd9cf1377bd97d764a5bee00463
       if (!new Utils().validateEmail(input.email)) {
         throw new Error("Invalid email.");
       }
@@ -109,11 +101,7 @@ class UsersController {
         role: input.role,
         position: input.position,
         max_days: input.max_days,
-<<<<<<< HEAD
-
-=======
         sex:input.sex,
->>>>>>> 62e5cef49b557fd9cf1377bd97d764a5bee00463
       }).save();
 
       res.status(200).json({
